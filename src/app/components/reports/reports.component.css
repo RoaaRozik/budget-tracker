@@ -1,0 +1,110 @@
+.reports-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.reports-container h1 {
+  margin: 0 0 24px 0;
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.filter-card {
+  margin-bottom: 24px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.filter-row mat-form-field {
+  flex: 1;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  gap: 16px;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  text-align: center;
+}
+
+.summary-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.summary-card .amount {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.summary-card .amount.income {
+  color: #4caf50;
+}
+
+.summary-card .amount.expense {
+  color: #f44336;
+}
+
+.summary-card .amount.savings {
+  color: #2196f3;
+}
+
+.summary-card.negative .amount.savings {
+  color: #ff9800;
+}
+
+.report-card {
+  margin-bottom: 24px;
+}
+
+.report-table {
+  width: 100%;
+}
+
+.report-table .positive {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.report-table .negative {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.report-table .neutral {
+  color: #666;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 24px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+  }
+}
+

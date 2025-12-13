@@ -1,0 +1,53 @@
+<mat-toolbar color="primary">
+  <span class="logo" routerLink="/dashboard">💰 Budget Tracker</span>
+  
+  <span class="spacer"></span>
+  
+  <!-- Navigation Links - Only show when logged in -->
+  <nav *ngIf="currentUser" class="nav-links">
+    <a mat-button routerLink="/dashboard" routerLinkActive="active">
+      <mat-icon>dashboard</mat-icon>
+      Dashboard
+    </a>
+    <a mat-button routerLink="/expenses" routerLinkActive="active">
+      <mat-icon>shopping_cart</mat-icon>
+      Expenses
+    </a>
+    <a mat-button routerLink="/income" routerLinkActive="active">
+      <mat-icon>attach_money</mat-icon>
+      Income
+    </a>
+    <a mat-button routerLink="/budgets" routerLinkActive="active">
+      <mat-icon>account_balance_wallet</mat-icon>
+      Budgets
+    </a>
+    <a mat-button routerLink="/goals" routerLinkActive="active">
+      <mat-icon>flag</mat-icon>
+      Goals
+    </a>
+    <a mat-button routerLink="/reports" routerLinkActive="active">
+      <mat-icon>assessment</mat-icon>
+      Reports
+    </a>
+  </nav>
+
+  <!-- User Menu - Only show when logged in -->
+  <div *ngIf="currentUser" class="user-menu">
+    <button mat-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+      {{ getUserName() }}
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <div class="user-info">
+        <p class="user-email">{{ currentUser.email }}</p>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>
+
