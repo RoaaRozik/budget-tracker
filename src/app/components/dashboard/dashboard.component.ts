@@ -8,8 +8,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
 
 import { AuthService } from '../../services/auth.service';
+
+// Register Chart.js components
+Chart.register(...registerables);
 import { ExpenseService } from '../../services/expense.service';
 import { IncomeService } from '../../services/income.service';
 import { BudgetService } from '../../services/budget.service';
@@ -195,16 +199,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
       categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + expense.amount;
     });
 
-    this.pieChartData = {
-      labels: Object.keys(categoryTotals),
-      datasets: [{
-        data: Object.values(categoryTotals),
-        backgroundColor: [
-          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-          '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
-        ]
-      }]
-    };
+    const labels = Object.keys(categoryTotals);
+    const data = Object.values(categoryTotals);
+
+    // Only set chart data if there's data to display
+    if (labels.length > 0 && data.length > 0) {
+      this.pieChartData = {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+            '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
+          ]
+        }]
+      };
+    } else {
+      // Provide empty data structure for Chart.js
+      this.pieChartData = {
+        labels: ['No Data'],
+        datasets: [{
+          data: [1],
+          backgroundColor: ['#E0E0E0']
+        }]
+      };
+    }
   }
 
   /**
@@ -264,17 +283,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
       savingsData.push(monthIncome - monthExpense);
     }
 
-    this.lineChartData = {
-      labels: months,
-      datasets: [{
-        label: 'Savings',
-        data: savingsData,
-        borderColor: '#1976d2',
-        backgroundColor: 'rgba(25, 118, 210, 0.1)',
-        fill: true,
-        tension: 0.4
-      }]
-    };
+    // Ensure we have data to display
+    if (months.length > 0 && savingsData.length > 0) {
+      this.lineChartData = {
+        labels: months,
+        datasets: [{
+          label: 'Savings',
+          data: savingsData,
+          borderColor: '#1976d2',
+          backgroundColor: 'rgba(25, 118, 210, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      };
+    } else {
+      // Provide empty data structure
+      this.lineChartData = {
+        labels: ['No Data'],
+        datasets: [{
+          label: 'Savings',
+          data: [0],
+          borderColor: '#1976d2',
+          backgroundColor: 'rgba(25, 118, 210, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      };
+    }
   }
 
   formatCurrency(amount: number): string {
