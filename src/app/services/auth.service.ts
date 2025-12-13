@@ -63,11 +63,8 @@ export class AuthService {
           lastName: userData.lastName,
           createdAt: new Date()
         });
-      }),
-      tap(user => {
-        // Automatically log in after registration
-        this.setCurrentUser(user);
       })
+      // Note: We don't auto-login after registration - user must log in manually
     );
   }
 

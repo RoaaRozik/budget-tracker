@@ -72,8 +72,9 @@ export class RegisterComponent {
       this.authService.register({ firstName, lastName, email, password }).subscribe({
         next: (user) => {
           this.isLoading = false;
-          this.snackBar.open('Registration successful!', 'Close', { duration: 3000 });
-          this.router.navigate(['/dashboard']);
+          this.snackBar.open('Registration successful! Please log in to continue.', 'Close', { duration: 4000 });
+          // Redirect to login page with email pre-filled
+          this.router.navigate(['/login'], { queryParams: { email: email } });
         },
         error: (error) => {
           this.isLoading = false;
