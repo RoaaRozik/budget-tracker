@@ -48,7 +48,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   
   reportForm: FormGroup;
   
-  // Report data
+
   totalIncome = 0;
   totalExpenses = 0;
   netSavings = 0;
@@ -95,7 +95,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     const sub = combineLatest([expenses$, incomes$, budgets$]).subscribe({
       next: ([expenses, incomes, budgets]) => {
-        // Filter data by date range
         const filteredExpenses = expenses.filter(e => {
           const date = new Date(e.date);
           return date >= startDate && date <= endDate;
@@ -106,12 +105,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
           return date >= startDate && date <= endDate;
         });
 
-        // Calculate totals
         this.totalIncome = filteredIncomes.reduce((sum, i) => sum + i.amount, 0);
         this.totalExpenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
         this.netSavings = this.totalIncome - this.totalExpenses;
 
-        // Calculate category reports
         this.calculateCategoryReports(filteredExpenses, budgets, startDate, endDate);
 
         this.isLoading = false;
@@ -128,20 +125,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
   private calculateCategoryReports(expenses: any[], budgets: any[], startDate: Date, endDate: Date): void {
     const categoryMap: { [key: string]: { budgeted: number; spent: number } } = {};
 
-    // Get current month budget
     const now = new Date(startDate);
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
     const currentBudget = budgets.find(b => b.month === currentMonth && b.year === currentYear);
 
-    // Initialize from budget
     if (currentBudget) {
       currentBudget.categories.forEach((cat: any) => {
         categoryMap[cat.category] = { budgeted: cat.limit, spent: 0 };
       });
     }
 
-    // Calculate spent by category
     expenses.forEach(expense => {
       if (!categoryMap[expense.category]) {
         categoryMap[expense.category] = { budgeted: 0, spent: 0 };
@@ -149,7 +143,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
       categoryMap[expense.category].spent += expense.amount;
     });
 
-    // Convert to array and calculate variance
     this.categoryReports = Object.keys(categoryMap).map(category => {
       const data = categoryMap[category];
       const variance = data.budgeted - data.spent;

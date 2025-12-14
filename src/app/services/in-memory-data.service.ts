@@ -5,27 +5,20 @@ import { Income } from '../models/income.model';
 import { Budget } from '../models/budget.model';
 import { Goal } from '../models/goal.model';
 
-/**
- * In-Memory Data Service
- * This service simulates a backend database using in-memory storage.
- * It provides sample data for development and testing.
- */
+
 export class InMemoryDataService implements InMemoryDbService {
   createDb() {
-    console.log('🟢 IN-MEMORY-DB: Creating database...');
-    // Sample users - in a real app, passwords would be hashed
     const users: User[] = [
       {
         id: 1,
         email: 'demo@example.com',
-        password: 'demo123', // Demo password for testing
+        password: 'demo123',
         firstName: 'Demo',
         lastName: 'User',
         createdAt: new Date('2024-01-01')
       }
     ];
 
-    // Sample expenses for user 1
     const expenses: Expense[] = [
       {
         id: 1,
@@ -75,7 +68,7 @@ export class InMemoryDataService implements InMemoryDbService {
       }
     ];
 
-    // Sample income for user 1
+
     const incomes: Income[] = [
       {
         id: 1,
@@ -95,12 +88,12 @@ export class InMemoryDataService implements InMemoryDbService {
       }
     ];
 
-    // Sample budgets for user 1
+
     const budgets: Budget[] = [
       {
         id: 1,
         userId: 1,
-        month: 1, // January
+        month: 1, 
         year: 2024,
         totalIncome: 5500,
         categories: [
@@ -115,7 +108,6 @@ export class InMemoryDataService implements InMemoryDbService {
       }
     ];
 
-    // Sample goals for user 1
     const goals: Goal[] = [
       {
         id: 1,
@@ -144,9 +136,7 @@ export class InMemoryDataService implements InMemoryDbService {
     return db;
   }
 
-  // Override genId to ensure that entities always have an id.
-  // If the entities array is empty, return the initial number (1).
-  // If the entities array has items, return the highest id + 1.
+
   genId<T extends { id: number }>(collection: T[], collectionName: string): number {
     return collection.length > 0
       ? Math.max(...collection.map(item => item.id)) + 1

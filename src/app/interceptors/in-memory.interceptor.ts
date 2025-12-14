@@ -2,13 +2,6 @@ import { HttpInterceptorFn, HttpRequest, HttpHandlerFn } from '@angular/common/h
 import { of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 
-/**
- * In-Memory HTTP Interceptor
- * Intercepts HTTP requests to /api/* and returns mock data
- * This replaces the in-memory-web-api module which doesn't work well with standalone apps
- */
-
-// In-memory database
 let users: any[] = [
   {
     id: 1,
@@ -130,7 +123,6 @@ let goals: any[] = [
   }
 ];
 
-// Helper function to get next ID
 function getNextId(collection: any[]): number {
   return collection.length > 0
     ? Math.max(...collection.map(item => item.id)) + 1
@@ -140,26 +132,21 @@ function getNextId(collection: any[]): number {
 export const inMemoryInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn) => {
   const url = req.url;
   
-  // Only intercept /api/* requests
   if (!url.startsWith('/api/') && !url.startsWith('api/')) {
     return next(req);
   }
 
-  console.log('🟢 INTERCEPTOR: Intercepting request to:', url);
-  console.log('🟢 INTERCEPTOR: Method:', req.method);
 
-  // Parse the URL
+
   const urlWithoutApi = url.replace(/^\/?api\//, '');
   const urlWithoutQuery = urlWithoutApi.split('?')[0];
   const urlParts = urlWithoutQuery.split('/');
   const collection = urlParts[0]; // users, expenses, etc.
   const id = urlParts[1] ? parseInt(urlParts[1]) : null;
   
-  // Parse query parameters
   const queryString = url.includes('?') ? url.split('?')[1] : '';
   const queryParams = new URLSearchParams(queryString);
 
-  // Handle GET requests
   if (req.method === 'GET') {
     let data: any[] = [];
     
@@ -169,7 +156,6 @@ export const inMemoryInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, ne
         break;
       case 'expenses':
         data = expenses;
-        // Filter by userId if query param exists
         const expenseUserId = queryParams.get('userId');
         if (expenseUserId) {
           data = data.filter(e => e.userId === parseInt(expenseUserId));
@@ -200,22 +186,18 @@ export const inMemoryInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, ne
         return next(req);
     }
 
-    // If ID is specified, return single item
     if (id) {
       const item = data.find(d => d.id === id);
       if (item) {
-        console.log('🟢 INTERCEPTOR: Returning item:', item);
         return of(new HttpResponse({ status: 200, body: item }));
       } else {
         return of(new HttpResponse({ status: 404, body: { error: 'Not found' } }));
       }
     }
 
-    console.log('🟢 INTERCEPTOR: Returning collection:', data);
     return of(new HttpResponse({ status: 200, body: data }));
   }
 
-  // Handle POST requests (create)
   if (req.method === 'POST') {
     const newItem = { ...req.body, id: 0 };
     
@@ -223,34 +205,28 @@ export const inMemoryInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, ne
       case 'users':
         newItem.id = getNextId(users);
         users.push(newItem);
-        console.log('🟢 INTERCEPTOR: Created user:', newItem);
         return of(new HttpResponse({ status: 201, body: newItem }));
       case 'expenses':
         newItem.id = getNextId(expenses);
         expenses.push(newItem);
-        console.log('🟢 INTERCEPTOR: Created expense:', newItem);
         return of(new HttpResponse({ status: 201, body: newItem }));
       case 'incomes':
         newItem.id = getNextId(incomes);
         incomes.push(newItem);
-        console.log('🟢 INTERCEPTOR: Created income:', newItem);
         return of(new HttpResponse({ status: 201, body: newItem }));
       case 'budgets':
         newItem.id = getNextId(budgets);
         budgets.push(newItem);
-        console.log('🟢 INTERCEPTOR: Created budget:', newItem);
         return of(new HttpResponse({ status: 201, body: newItem }));
       case 'goals':
         newItem.id = getNextId(goals);
         goals.push(newItem);
-        console.log('🟢 INTERCEPTOR: Created goal:', newItem);
         return of(new HttpResponse({ status: 201, body: newItem }));
       default:
         return next(req);
     }
   }
 
-  // Handle PUT requests (update)
   if (req.method === 'PUT' && id) {
     let collectionData: any[] = [];
     
@@ -277,14 +253,12 @@ export const inMemoryInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, ne
     const index = collectionData.findIndex(item => item.id === id);
     if (index !== -1) {
       collectionData[index] = { ...collectionData[index], ...req.body };
-      console.log('🟢 INTERCEPTOR: Updated item:', collectionData[index]);
       return of(new HttpResponse({ status: 200, body: collectionData[index] }));
     } else {
       return of(new HttpResponse({ status: 404, body: { error: 'Not found' } }));
     }
   }
 
-  // Handle DELETE requests
   if (req.method === 'DELETE' && id) {
     let collectionData: any[] = [];
     
@@ -311,14 +285,12 @@ export const inMemoryInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, ne
     const index = collectionData.findIndex(item => item.id === id);
     if (index !== -1) {
       collectionData.splice(index, 1);
-      console.log('🟢 INTERCEPTOR: Deleted item with id:', id);
       return of(new HttpResponse({ status: 200, body: {} }));
     } else {
       return of(new HttpResponse({ status: 404, body: { error: 'Not found' } }));
     }
   }
 
-  // If we can't handle it, pass through
   return next(req);
 };
 

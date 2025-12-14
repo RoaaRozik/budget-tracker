@@ -3,7 +3,6 @@
   
   <span class="spacer"></span>
   
-  <!-- Navigation Links - Only show when logged in -->
   <nav *ngIf="currentUser" class="nav-links">
     <a mat-button routerLink="/dashboard" routerLinkActive="active">
       <mat-icon>dashboard</mat-icon>
@@ -31,7 +30,6 @@
     </a>
   </nav>
 
-  <!-- User Menu - Only show when logged in -->
   <div *ngIf="currentUser" class="user-menu">
     <button mat-button [matMenuTriggerFor]="userMenu">
       <mat-icon>account_circle</mat-icon>

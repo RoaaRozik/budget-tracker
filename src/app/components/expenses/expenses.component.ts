@@ -33,11 +33,7 @@ const EXPENSE_CATEGORIES = [
   'Other'
 ];
 
-/**
- * Expenses Component
- * Displays list of expenses and allows CRUD operations
- * Uses Material Table for display and Dialog for add/edit
- */
+
 @Component({
   selector: 'app-expenses',
   standalone: true,
@@ -78,7 +74,6 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private snackBar: MatSnackBar
   ) {
-    // Initialize form
     this.expenseForm = this.fb.group({
       amount: ['', [Validators.required, Validators.min(0.01)]],
       category: ['', Validators.required],
@@ -102,9 +97,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  /**
-   * Load all expenses for the current user
-   */
+
   loadExpenses(): void {
     if (!this.currentUserId) return;
     
@@ -125,9 +118,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
   }
 
-  /**
-   * Open dialog/form to add new expense
-   */
+
   openAddDialog(): void {
     this.isEditMode = false;
     this.editingExpenseId = null;
@@ -141,9 +132,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Open dialog/form to edit existing expense
-   */
+
   openEditDialog(expense: Expense): void {
     this.isEditMode = true;
     this.editingExpenseId = expense.id;
@@ -157,9 +146,6 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Save expense (create or update)
-   */
   saveExpense(): void {
     if (this.expenseForm.valid && this.currentUserId) {
       const formValue = this.expenseForm.value;
@@ -174,7 +160,6 @@ export class ExpensesComponent implements OnInit, OnDestroy {
       };
 
       if (this.isEditMode && this.editingExpenseId) {
-        // Update existing expense
         const sub = this.expenseService.updateExpense(this.editingExpenseId, expenseData).subscribe({
           next: () => {
             this.snackBar.open('Expense updated successfully', 'Close', { duration: 3000 });
@@ -188,7 +173,6 @@ export class ExpensesComponent implements OnInit, OnDestroy {
         });
         this.subscriptions.add(sub);
       } else {
-        // Create new expense
         const sub = this.expenseService.createExpense(expenseData).subscribe({
           next: () => {
             this.snackBar.open('Expense added successfully', 'Close', { duration: 3000 });
@@ -207,9 +191,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Delete expense with confirmation
-   */
+
   deleteExpense(id: number): void {
     if (confirm('Are you sure you want to delete this expense?')) {
       const sub = this.expenseService.deleteExpense(id).subscribe({
@@ -226,17 +208,13 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Format date for display
-   */
+
   formatDate(date: Date | string): string {
     const d = new Date(date);
     return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
-  /**
-   * Format currency for display
-   */
+
   formatCurrency(amount: number): string {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',

@@ -12,7 +12,7 @@ import { Chart, registerables } from 'chart.js';
 
 import { AuthService } from '../../services/auth.service';
 
-// Register Chart.js components
+
 Chart.register(...registerables);
 import { ExpenseService } from '../../services/expense.service';
 import { IncomeService } from '../../services/income.service';
@@ -37,14 +37,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentUserId: number | null = null;
   isLoading = false;
   
-  // Summary data
+
   totalIncome = 0;
   totalExpenses = 0;
   savings = 0;
   totalGoals = 0;
   goalsProgress = 0;
 
-  // Chart data
+
   pieChartData: ChartData<'pie'> = {
     labels: [],
     datasets: [{
@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     datasets: []
   };
 
-  // Chart options
+
   pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     plugins: {
@@ -134,10 +134,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  /**
-   * Load all data needed for dashboard
-   * Uses combineLatest to load multiple observables in parallel
-   */
+
   loadDashboardData(): void {
     if (!this.currentUserId) return;
 
@@ -146,7 +143,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
 
-    // Load all data in parallel
     const expenses$ = this.expenseService.getExpenses(this.currentUserId);
     const incomes$ = this.incomeService.getIncomes(this.currentUserId);
     const budgets$ = this.budgetService.getBudgets(this.currentUserId);
@@ -154,7 +150,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const sub = combineLatest([expenses$, incomes$, budgets$, goals$]).subscribe({
       next: ([expenses, incomes, budgets, goals]) => {
-        // Calculate totals for current month
         const monthExpenses = expenses.filter(e => {
           const d = new Date(e.date);
           return d.getMonth() + 1 === currentMonth && d.getFullYear() === currentYear;
@@ -168,12 +163,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.totalIncome = monthIncomes.reduce((sum, i) => sum + i.amount, 0);
         this.savings = this.totalIncome - this.totalExpenses;
 
-        // Goals data
         this.totalGoals = goals.length;
         const totalGoalProgress = goals.reduce((sum, g) => sum + (g.currentAmount / g.targetAmount), 0);
         this.goalsProgress = this.totalGoals > 0 ? (totalGoalProgress / this.totalGoals) * 100 : 0;
 
-        // Setup charts
         this.setupPieChart(monthExpenses);
         this.setupBarChart(monthIncomes, monthExpenses);
         this.setupLineChart(incomes, expenses);
@@ -189,9 +182,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
   }
 
-  /**
-   * Setup pie chart for expenses by category
-   */
+
   private setupPieChart(expenses: any[]): void {
     const categoryTotals: { [key: string]: number } = {};
     
@@ -202,7 +193,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const labels = Object.keys(categoryTotals);
     const data = Object.values(categoryTotals);
 
-    // Only set chart data if there's data to display
     if (labels.length > 0 && data.length > 0) {
       this.pieChartData = {
         labels: labels,
@@ -215,7 +205,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }]
       };
     } else {
-      // Provide empty data structure for Chart.js
       this.pieChartData = {
         labels: ['No Data'],
         datasets: [{
@@ -226,9 +215,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Setup bar chart for income vs expenses
-   */
+
   private setupBarChart(incomes: any[], expenses: any[]): void {
     const incomeTotal = incomes.reduce((sum, i) => sum + i.amount, 0);
     const expenseTotal = expenses.reduce((sum, e) => sum + e.amount, 0);
@@ -250,11 +237,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  /**
-   * Setup line chart for savings progress
-   */
+
   private setupLineChart(incomes: any[], expenses: any[]): void {
-    // Group by month for last 6 months
     const months: string[] = [];
     const savingsData: number[] = [];
     
@@ -283,7 +267,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       savingsData.push(monthIncome - monthExpense);
     }
 
-    // Ensure we have data to display
     if (months.length > 0 && savingsData.length > 0) {
       this.lineChartData = {
         labels: months,
@@ -297,7 +280,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }]
       };
     } else {
-      // Provide empty data structure
       this.lineChartData = {
         labels: ['No Data'],
         datasets: [{

@@ -10,9 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../services/auth.service';
 
-/**
- * Custom validator function to check if passwords match
- */
+
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');
@@ -24,9 +22,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
   return password.value === confirmPassword.value ? null : { passwordMismatch: true };
 }
 
-/**
- * Register Component
- */
+
 @Component({
   selector: 'app-register',
   standalone: true,

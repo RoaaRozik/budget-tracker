@@ -10,7 +10,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    // Configure HTTP client with our custom in-memory interceptor
     provideHttpClient(
       withInterceptors([inMemoryInterceptor])
     ),

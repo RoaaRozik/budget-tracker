@@ -235,10 +235,7 @@ export class BudgetsComponent implements OnInit, OnDestroy {
     return this.months[month - 1] || '';
   }
 
-  /**
-   * Calculate total budgeted amount for a budget
-   * This method is used in the template instead of inline reduce()
-   */
+
   getTotalBudgeted(budget: Budget): number {
     return budget.categories.reduce((sum, cat) => sum + cat.limit, 0);
   }

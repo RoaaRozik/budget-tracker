@@ -11,11 +11,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
 
-/**
- * Navigation Component
- * Main navigation bar with user menu and logout
- * Shows different links based on authentication state
- */
+
 @Component({
   selector: 'app-nav',
   standalone: true,
@@ -41,8 +37,7 @@ export class NavComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to current user changes
-    // This will update the nav when user logs in/out
+
     this.userSubscription = this.authService.currentUser$.subscribe(
       user => {
         this.currentUser = user;
@@ -51,23 +46,18 @@ export class NavComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Clean up subscription to prevent memory leaks
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
     }
   }
 
-  /**
-   * Handle logout
-   */
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
 
-  /**
-   * Get user's full name for display
-   */
+  
   getUserName(): string {
     if (this.currentUser) {
       return `${this.currentUser.firstName} ${this.currentUser.lastName}`;

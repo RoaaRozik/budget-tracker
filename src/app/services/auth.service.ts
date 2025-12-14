@@ -4,10 +4,7 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { map, catchError, switchMap, tap } from 'rxjs/operators';
 import { User } from '../models/user.model';
 
-/**
- * Authentication Service
- * Handles user authentication (login, register, logout)
- */
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,20 +29,18 @@ export class AuthService {
     }
   }
 
-  /**
-   * Register a new user
-   */
+ 
   register(userData: {
     email: string;
     password: string;
     firstName: string;
     lastName: string;
   }): Observable<User> {
-    // First, get all existing users to check for duplicates
+    
     return this.http.get<User[]>(this.apiUrl).pipe(
-      catchError(() => of([])), // If GET fails, assume no users exist
+      catchError(() => of([])), 
       switchMap(existingUsers => {
-        // Check if email already exists (case-insensitive)
+        
         const emailLower = userData.email.toLowerCase().trim();
         const exists = existingUsers.some(u => 
           u.email && u.email.toLowerCase().trim() === emailLower
@@ -55,7 +50,7 @@ export class AuthService {
           return throwError(() => new Error('A user with this email already exists'));
         }
         
-        // Create new user
+        
         return this.http.post<User>(this.apiUrl, {
           email: userData.email,
           password: userData.password,
@@ -64,21 +59,18 @@ export class AuthService {
           createdAt: new Date()
         });
       })
-      // Note: We don't auto-login after registration - user must log in manually
+      
     );
   }
 
-  /**
-   * Login with email and password
-   */
+
   login(email: string, password: string): Observable<User | null> {
     return this.http.get<User[]>(this.apiUrl).pipe(
       catchError(() => {
-        // If request fails, return empty array
+     
         return of([]);
       }),
       map(users => {
-        // Find user by email and password (case-insensitive email)
         const emailLower = email.toLowerCase().trim();
         const user = users.find(u => 
           u.email && 

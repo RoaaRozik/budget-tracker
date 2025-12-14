@@ -10,9 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../services/auth.service';
 
-/**
- * Login Component
- */
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -47,7 +45,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check if email is passed as query parameter (e.g., from registration)
     this.route.queryParams.subscribe(params => {
       if (params['email']) {
         this.loginForm.patchValue({ email: params['email'] });

@@ -1,10 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 
-/**
- * Application Routes Configuration
- * Defines all routes in the application with their guards
- */
+
 export const routes: Routes = [
   {
     path: '',
@@ -22,7 +19,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent),
-    canActivate: [authGuard] // Protected route - requires authentication
+    canActivate: [authGuard] 
   },
   {
     path: 'expenses',
@@ -50,7 +47,7 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: '**', // Wildcard route - catches all unmatched routes
+    path: '**', 
     redirectTo: '/dashboard'
   }
 ];
